@@ -1,0 +1,20 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup Label="Microsoft NuGet Packages (Source)">
+  </ItemGroup>
+
+  <ItemGroup Label="Microsoft NuGet Packages (Test)">
+    <PackageReference Update="coverlet.collector" Version="3.1.2" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Update="xunit" Version="2.4.1" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" />
+  </ItemGroup>
+  
+  <ItemGroup Label="External Testing Packages">
+    <PackageReference Update="Bogus" Version="34.0.2" />
+    <PackageReference Update="bunit" Version="1.4.15" />
+    <PackageReference Update="FluentAssertions" Version="6.7.0" />
+    <PackageReference Update="Moq" Version="4.18.1" />
+  </ItemGroup>
+
+</Project>
