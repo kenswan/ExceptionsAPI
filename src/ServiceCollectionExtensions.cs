@@ -1,22 +1,36 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ExceptionsAPI;
 public static class ServiceCollectionExtensions
 {
     public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection)
     {
-        // TODO: Add Options
+        serviceCollection.AddOptions<ExceptionsOptions>();
+
         return new ExceptionsAPIBuilder();
     }
 
-    public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection, string correlationId)
+    public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection, string correlationIdHeader)
     {
-        // TODO: Add Options
+        serviceCollection.Configure<ExceptionsOptions>(options => options.CorrelationIdHeader = correlationIdHeader);
+
         return new ExceptionsAPIBuilder();
     }
 
-    public static void UseExcpetionsAPI()
+    public static IExceptionsAPIBuilder AddExceptionsAPI(
+        this IServiceCollection serviceCollection,
+        string correlationIdHeader,
+        Func<HttpContext, IServiceProvider, string> defaultCorrelationIdBuilder)
     {
-        // TODO: Add .UseMiddleware<ExceptionsMiddleware>();
+        serviceCollection.AddOptions<ExceptionsOptions>();
+
+        serviceCollection.AddTransient<ICorrelationBuilder>(_ => new CorrelationIdBuilder(defaultCorrelationIdBuilder));
+
+        return new ExceptionsAPIBuilder();
     }
+
+    public static IApplicationBuilder UseExcpetionsAPI(this IApplicationBuilder builder) =>
+        builder.UseMiddleware<ExceptionsMiddleware>();
 }

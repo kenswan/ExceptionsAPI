@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using System.Diagnostics;
 
@@ -15,11 +16,20 @@ internal class ExceptionsMiddleware
         this.next = next;
     }
 
-    public async Task Invoke(HttpContext httpContext, ILogger<ExceptionsMiddleware> logger)
+    public async Task Invoke(
+        HttpContext httpContext,
+        IOptions<ExceptionsOptions> options,
+        IServiceProvider serviceProvider,
+        ILogger<ExceptionsMiddleware> logger)
     {
         bool correlationIdExists =
-            httpContext.Request.Headers.TryGetValue(CORRELATION_ID_HEADER, out StringValues correlationIds);
+            httpContext.Request.Headers.TryGetValue(options.Value.CorrelationIdHeader, out StringValues correlationIds);
 
+        // TODO: Check for correlation ID builder if correlation ID does not exist
+        // If correlation ID builder has registered action, use that action
+        // Otherwise use below logic, which should be placed in ICorrelationBuilder default behavior
+
+        // TODO: Place default correlation ID composition in ICorrelationBuilder
         string correlationId = correlationIdExists ?
             correlationIds.First() : Activity.Current.Id ?? httpContext.TraceIdentifier;
 
