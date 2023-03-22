@@ -108,20 +108,13 @@ internal class ExceptionsMiddleware
         {
             logger.LogError(exception, "{Status}({Title}) - {Message}", problemDetails.Status, problemDetails.Title, exception.Message);
 
-            httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.InternalServerError;
 
-            var errorResponseString = JsonSerializer.Serialize(problemDetails);
-
-            await httpContext.Response.WriteAsync(errorResponseString);
-
-            // TODO: Add package needed for WriteAsJsonAsync
-            /*
             await httpContext.Response.WriteAsJsonAsync(
                 problemDetails,
                 problemDetails.GetType(), // WriteAsJson needs type to add additional fields provided in ValidationProblemDetails
                 new JsonSerializerOptions { WriteIndented = true },
-                "application/json"); */
+                "application/json");
         }
     }
 }
