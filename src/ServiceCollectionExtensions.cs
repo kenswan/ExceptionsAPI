@@ -12,19 +12,19 @@ public static class ServiceCollectionExtensions
         return new ExceptionsAPIBuilder();
     }
 
-    public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection, string correlationIdHeader)
+    public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection, Action<ExceptionsOptions> modifyOptions)
     {
-        serviceCollection.Configure<ExceptionsOptions>(options => options.CorrelationIdHeader = correlationIdHeader);
+        serviceCollection.Configure<ExceptionsOptions>(options => modifyOptions(options));
 
         return new ExceptionsAPIBuilder();
     }
 
     public static IExceptionsAPIBuilder AddExceptionsAPI(
         this IServiceCollection serviceCollection,
-        string correlationIdHeader,
+        Action<ExceptionsOptions> modifyOptions,
         Func<HttpContext, IServiceProvider, string> defaultCorrelationIdBuilder)
     {
-        serviceCollection.AddOptions<ExceptionsOptions>();
+        serviceCollection.Configure<ExceptionsOptions>(options => modifyOptions(options));
 
         serviceCollection.AddTransient<ICorrelationBuilder>(_ => new CorrelationIdBuilder(defaultCorrelationIdBuilder));
 
