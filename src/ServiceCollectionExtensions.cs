@@ -37,6 +37,6 @@ public static class ServiceCollectionExtensions
         return new ExceptionsAPIBuilder();
     }
 
-    public static IApplicationBuilder UseExcpetionsAPI(this IApplicationBuilder builder) =>
+    public static IApplicationBuilder UseExceptionsAPI(this IApplicationBuilder builder) =>
         builder.UseMiddleware<ExceptionsMiddleware>();
 }

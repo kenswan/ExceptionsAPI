@@ -4,18 +4,23 @@
 // -------------------------------------------------------
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using System.Diagnostics;
+using System.Net;
+using System.Text.Json;
 
 namespace ExceptionsAPI;
 
 internal class ExceptionsMiddleware
 {
     private readonly RequestDelegate next;
+
     // TODO: Remove this value and pull from configured options
     private const string CORRELATION_ID_HEADER = "X-Correlation-Id";
+
     public ExceptionsMiddleware(RequestDelegate next)
     {
         this.next = next;
@@ -51,9 +56,72 @@ internal class ExceptionsMiddleware
 
             await next(httpContext);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            logger.LogError(ex, "Found Error: {Message} (correlation Id: {Id}", ex.Message, correlationId);
+            await LogAndWriteExceptionAsync(HttpStatusCode.InternalServerError, exception, "An internal error has occurred");
+        }
+
+        async Task LogAndWriteExceptionAsync(HttpStatusCode httpStatusCode, Exception exception, string messageOverride = default)
+        {
+            if (exception.Data.Count == 0)
+            {
+                ProblemDetails problemDetails =
+                    InitializeProblemDetails<ProblemDetails>(httpStatusCode, exception, messageOverride);
+
+                await LogAndWriteProblemDetailsExceptionAsync(problemDetails, exception);
+            }
+            else
+            {
+                ValidationProblemDetails problemDetails =
+                    InitializeProblemDetails<ValidationProblemDetails>(httpStatusCode, exception, messageOverride);
+
+                await LogAndWriteValidationProblemDetailsExceptionAsync(problemDetails, exception);
+            }
+        }
+
+        T InitializeProblemDetails<T>(HttpStatusCode httpStatusCode, Exception exception, string messageOverride = default)
+            where T : ProblemDetails, new()
+        {
+            return new T
+            {
+                Instance = !string.IsNullOrWhiteSpace(httpContext.Request.QueryString.ToString()) ?
+                    string.Concat(httpContext.Request.Path, httpContext.Request.QueryString) :
+                    httpContext.Request.Path,
+                Detail = messageOverride ?? exception.Message,
+                Status = (int)httpStatusCode,
+                Title = httpStatusCode.ToString(),
+                Type = exception.GetType().Name
+            };
+        }
+
+        async Task LogAndWriteValidationProblemDetailsExceptionAsync(ValidationProblemDetails problemDetails, Exception exception)
+        {
+            foreach (var key in exception.Data.Keys)
+            {
+                problemDetails.Errors.TryAdd(key.ToString(), new string[] { exception.Data[key].ToString() });
+            }
+
+            await LogAndWriteProblemDetailsExceptionAsync(problemDetails, exception);
+        }
+
+        async Task LogAndWriteProblemDetailsExceptionAsync(ProblemDetails problemDetails, Exception exception)
+        {
+            logger.LogError(exception, "{Status}({Title}) - {Message}", problemDetails.Status, problemDetails.Title, exception.Message);
+
+            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.InternalServerError;
+
+            var errorResponseString = JsonSerializer.Serialize(problemDetails);
+
+            await httpContext.Response.WriteAsync(errorResponseString);
+
+            // TODO: Add package needed for WriteAsJsonAsync
+            /*
+            await httpContext.Response.WriteAsJsonAsync(
+                problemDetails,
+                problemDetails.GetType(), // WriteAsJson needs type to add additional fields provided in ValidationProblemDetails
+                new JsonSerializerOptions { WriteIndented = true },
+                "application/json"); */
         }
     }
 }
