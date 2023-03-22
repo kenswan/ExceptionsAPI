@@ -1,8 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿// -------------------------------------------------------
+// Copyright (c) Ken Swan. All rights reserved.
+// Licensed under the MIT License
+// -------------------------------------------------------
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExceptionsAPI;
+
 public static class ServiceCollectionExtensions
 {
     public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection)
