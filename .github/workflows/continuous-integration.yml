@@ -27,10 +27,10 @@ jobs:
           - dotnet-install-framework: 7.0.x
             dotnet-target-framework: net7.0
     env:
-      source-directory: ./src/client/src
-      source-project: BlazorFocused.Client.csproj
-      test-directory: ./src/client/test
-      test-project: BlazorFocused.Client.Test.csproj
+      source-directory: ./src
+      source-project: ExceptionsAPI.csproj
+      test-directory: ./test
+      test-project: ExceptionsAPI.Test.csproj
 
     steps:
       - uses: actions/checkout@v2
