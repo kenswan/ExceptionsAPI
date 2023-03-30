@@ -3,13 +3,6 @@
 // Licensed under the MIT License
 // -------------------------------------------------------
 
-namespace ExceptionsAPI.Test;
+using System.Runtime.CompilerServices;
 
-public class UnitTest1
-{
-    [Fact]
-    public void Test1()
-    {
-
-    }
-}
+[assembly: InternalsVisibleTo("ExceptionsAPI.Test")]
