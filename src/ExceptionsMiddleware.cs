@@ -96,10 +96,7 @@ internal class ExceptionsMiddleware
 
         async Task LogAndWriteValidationProblemDetailsExceptionAsync(ValidationProblemDetails problemDetails, Exception exception)
         {
-            foreach (var key in exception.Data.Keys)
-            {
-                problemDetails.Errors.TryAdd(key.ToString(), new string[] { exception.Data[key].ToString() });
-            }
+            ExceptionDataHelper.SetValidationDetailsFromExceptionData(problemDetails, exception);
 
             await LogAndWriteProblemDetailsExceptionAsync(problemDetails, exception);
         }
