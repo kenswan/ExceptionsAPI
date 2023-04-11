@@ -5,7 +5,7 @@
 
 namespace ExceptionsAPI;
 
-public class ExceptionsOptions
+public class ExceptionAPIOptions
 {
     public string CorrelationIdHeader { get; set; } = "X-Correlation-Id";
 }

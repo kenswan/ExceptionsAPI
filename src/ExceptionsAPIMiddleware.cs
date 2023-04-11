@@ -8,40 +8,38 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 
 namespace ExceptionsAPI;
 
-internal class ExceptionsMiddleware
+internal class ExceptionsAPIMiddleware
 {
     private readonly RequestDelegate next;
 
     // TODO: Remove this value and pull from configured options
     private const string CORRELATION_ID_HEADER = "X-Correlation-Id";
 
-    public ExceptionsMiddleware(RequestDelegate next)
+    public ExceptionsAPIMiddleware(RequestDelegate next)
     {
         this.next = next;
     }
 
     public async Task Invoke(
         HttpContext httpContext,
-        IOptions<ExceptionsOptions> options,
-        // IServiceProvider serviceProvider,
-        ILogger<ExceptionsMiddleware> logger)
+        IOptions<ExceptionAPIOptions> exceptionAPIOptions,
+        IOptionsMonitor<ExceptionOptions> exceptionOptionsMonitor,
+        ILogger<ExceptionsAPIMiddleware> logger)
     {
         var correlationIdExists =
-            httpContext.Request.Headers.TryGetValue(options.Value.CorrelationIdHeader, out StringValues correlationIds);
+            httpContext.Request.Headers.TryGetValue(exceptionAPIOptions.Value.CorrelationIdHeader, out StringValues correlationIds);
 
         // TODO: Check for correlation ID builder if correlation ID does not exist
         // If correlation ID builder has registered action, use that action
         // Otherwise use below logic, which should be placed in ICorrelationBuilder default behavior
 
         // TODO: Place default correlation ID composition in ICorrelationBuilder
-        var correlationId = correlationIdExists ?
-            correlationIds.First() : Activity.Current.Id ?? httpContext.TraceIdentifier;
+        var correlationId = correlationIdExists ? correlationIds.First() : Guid.NewGuid().ToString();
 
         try
         {
@@ -58,7 +56,20 @@ internal class ExceptionsMiddleware
         }
         catch (Exception exception)
         {
-            await LogAndWriteExceptionAsync(HttpStatusCode.InternalServerError, exception, "An internal error has occurred");
+            ExceptionOptions exceptionOptions =
+                exceptionOptionsMonitor.Get(exception.GetType().AssemblyQualifiedName);
+
+            if (exceptionOptions is not null)
+            {
+                await LogAndWriteExceptionAsync(
+                    exceptionOptions.HttpStatusCode,
+                    exception,
+                    exceptionOptions.Message);
+            }
+            else
+            {
+                await LogAndWriteExceptionAsync(HttpStatusCode.InternalServerError, exception, "An internal error has occurred");
+            }
         }
 
         async Task LogAndWriteExceptionAsync(HttpStatusCode httpStatusCode, Exception exception, string messageOverride = default)

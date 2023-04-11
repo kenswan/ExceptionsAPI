@@ -13,30 +13,30 @@ public static class ServiceCollectionExtensions
 {
     public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddOptions<ExceptionsOptions>();
+        serviceCollection.AddOptions<ExceptionAPIOptions>();
 
-        return new ExceptionsAPIBuilder();
+        return new ExceptionsAPIBuilder(serviceCollection);
     }
 
-    public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection, Action<ExceptionsOptions> modifyOptions)
+    public static IExceptionsAPIBuilder AddExceptionsAPI(this IServiceCollection serviceCollection, Action<ExceptionAPIOptions> modifyOptions)
     {
-        serviceCollection.Configure<ExceptionsOptions>(options => modifyOptions(options));
+        serviceCollection.Configure<ExceptionAPIOptions>(options => modifyOptions(options));
 
-        return new ExceptionsAPIBuilder();
+        return new ExceptionsAPIBuilder(serviceCollection);
     }
 
     public static IExceptionsAPIBuilder AddExceptionsAPI(
         this IServiceCollection serviceCollection,
-        Action<ExceptionsOptions> modifyOptions,
+        Action<ExceptionAPIOptions> modifyOptions,
         Func<HttpContext, IServiceProvider, string> defaultCorrelationIdBuilder)
     {
-        serviceCollection.Configure<ExceptionsOptions>(options => modifyOptions(options));
+        serviceCollection.Configure<ExceptionAPIOptions>(options => modifyOptions(options));
 
         serviceCollection.AddTransient<ICorrelationBuilder>(_ => new CorrelationIdBuilder(defaultCorrelationIdBuilder));
 
-        return new ExceptionsAPIBuilder();
+        return new ExceptionsAPIBuilder(serviceCollection);
     }
 
     public static IApplicationBuilder UseExceptionsAPI(this IApplicationBuilder builder) =>
-        builder.UseMiddleware<ExceptionsMiddleware>();
+        builder.UseMiddleware<ExceptionsAPIMiddleware>();
 }

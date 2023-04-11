@@ -13,7 +13,9 @@ public interface IExceptionsAPIBuilder
 {
     public IExceptionsAPIBuilder AddCorrelation(Func<HttpContext, IServiceProvider, string> correlationBuilder);
 
-    public IExceptionsAPIBuilder AddException(Exception exception, HttpStatusCode httpStatusCode);
+    public IExceptionsAPIBuilder AddException<TException>(HttpStatusCode httpStatusCode)
+        where TException : Exception;
 
-    public IExceptionsAPIBuilder AddException(Exception exception, Action<ValidationProblemDetails> action);
+    public IExceptionsAPIBuilder AddException<TException>(Func<TException, ProblemDetails> action)
+        where TException : Exception;
 }
