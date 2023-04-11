@@ -11,7 +11,6 @@
 
   <ItemGroup Label="Microsoft NuGet Packages (Source)">
     <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
   <ItemGroup Label="Microsoft NuGet Packages (.NET 6 Source)" Condition="'$(TargetFramework)' == 'net6.0'">
