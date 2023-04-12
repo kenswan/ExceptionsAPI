@@ -3,18 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32611.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionsAPI", "src\ExceptionsAPI.csproj", "{AB91CC74-1EEF-4C66-A5F8-C8E38D494937}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionsAPI.Test", "test\ExceptionsAPI.Test.csproj", "{4D7548C1-F397-48F9-A79F-E6257EE59DA2}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.ExceptionAPI", "samples\src\Samples.ExceptionAPI.csproj", "{22D0A007-C4D5-4215-8246-97EE0A746B33}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{66BC2FBF-7C19-404D-AE48-830643E23DEA}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionsAPI", "src\ExceptionsAPI.csproj", "{AB91CC74-1EEF-4C66-A5F8-C8E38D494937}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionsAPI.Test", "test\ExceptionsAPI.Test.csproj", "{4D7548C1-F397-48F9-A79F-E6257EE59DA2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.ExceptionAPI", "samples\src\Samples.ExceptionAPI.csproj", "{22D0A007-C4D5-4215-8246-97EE0A746B33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.ExceptionAPI.Test", "samples\test\Samples.ExceptionAPI.Test.csproj", "{71F1A4AE-DE9E-40A8-AA59-2AA32CE3A529}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,10 @@ Global
 		{22D0A007-C4D5-4215-8246-97EE0A746B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22D0A007-C4D5-4215-8246-97EE0A746B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22D0A007-C4D5-4215-8246-97EE0A746B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71F1A4AE-DE9E-40A8-AA59-2AA32CE3A529}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71F1A4AE-DE9E-40A8-AA59-2AA32CE3A529}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71F1A4AE-DE9E-40A8-AA59-2AA32CE3A529}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71F1A4AE-DE9E-40A8-AA59-2AA32CE3A529}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
