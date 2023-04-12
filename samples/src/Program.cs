@@ -19,12 +19,8 @@ builder.Services
 
 WebApplication app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 // Register Exceptions API Middleware
@@ -35,8 +31,9 @@ app.MapGet("/ThrowRandomException", () =>
 {
     throw new RandomException("This is a test exception");
 })
-.WithName("GetWeatherForecast")
 .WithOpenApi();
 
 app.Run();
 
+// Used for integration test web application factory accessibility
+public partial class Program { }
