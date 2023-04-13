@@ -3,12 +3,13 @@
 // Licensed under the MIT License
 // -------------------------------------------------------
 
+using ExceptionsAPI.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 
-namespace ExceptionsAPI;
+namespace ExceptionsAPI.Builder;
 
 internal class ExceptionsAPIBuilder : IExceptionsAPIBuilder
 {

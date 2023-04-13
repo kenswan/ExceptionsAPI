@@ -10,7 +10,7 @@ using Moq;
 using System.Net;
 using System.Text.Json;
 
-namespace ExceptionsAPI.Test;
+namespace ExceptionsAPI.Middleware;
 
 public partial class ExceptionsAPIMiddlewareTests
 {

@@ -4,11 +4,12 @@
 // -------------------------------------------------------
 
 using Bogus;
+using ExceptionsAPI.Middleware;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net;
 
-namespace ExceptionsAPI.Test;
+namespace ExceptionsAPI.Builder;
 
 public class ExceptionsAPIBuilderTests
 {

@@ -6,7 +6,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace ExceptionsAPI;
+namespace ExceptionsAPI.Middleware;
 
 internal class ExceptionOptions
 {

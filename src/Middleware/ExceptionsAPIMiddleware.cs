@@ -11,7 +11,7 @@ using Microsoft.Extensions.Primitives;
 using System.Net;
 using System.Text.Json;
 
-namespace ExceptionsAPI;
+namespace ExceptionsAPI.Middleware;
 
 internal class ExceptionsAPIMiddleware
 {

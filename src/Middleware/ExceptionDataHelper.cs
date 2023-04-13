@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Text.Json;
 
-namespace ExceptionsAPI;
+namespace ExceptionsAPI.Middleware;
 
 internal static class ExceptionDataHelper
 {

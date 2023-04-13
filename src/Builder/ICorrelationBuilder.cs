@@ -5,7 +5,8 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace ExceptionsAPI;
+namespace ExceptionsAPI.Builder;
+
 internal interface ICorrelationBuilder
 {
     string BuildCorrelationId(HttpContext httpContext, IServiceProvider serviceProvider);

@@ -7,6 +7,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Samples.ExceptionsAPI.Test;
 
-[CollectionDefinition(nameof(SampleExceptionAPITestCollection))]
-public class SampleExceptionAPITestCollection : ICollectionFixture<WebApplicationFactory<Program>>
+[CollectionDefinition(nameof(SampleExceptionsAPITestCollection))]
+public class SampleExceptionsAPITestCollection : ICollectionFixture<WebApplicationFactory<Program>>
 { }

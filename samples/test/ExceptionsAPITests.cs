@@ -8,12 +8,12 @@ using System.Net;
 
 namespace Samples.ExceptionsAPI.Test;
 
-[Collection(nameof(SampleExceptionAPITestCollection))]
-public class ExceptionAPITests
+[Collection(nameof(SampleExceptionsAPITestCollection))]
+public class ExceptionsAPITests
 {
     private readonly HttpClient client;
 
-    public ExceptionAPITests(WebApplicationFactory<Program> webApplicationFactory)
+    public ExceptionsAPITests(WebApplicationFactory<Program> webApplicationFactory)
     {
         this.client = webApplicationFactory.CreateClient();
     }
