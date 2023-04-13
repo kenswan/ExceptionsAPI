@@ -3,6 +3,8 @@
 // Licensed under the MIT License
 // -------------------------------------------------------
 
+using ExceptionsAPI.Builder;
+using ExceptionsAPI.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

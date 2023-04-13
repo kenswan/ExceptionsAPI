@@ -5,7 +5,7 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace ExceptionsAPI;
+namespace ExceptionsAPI.Builder;
 
 internal class CorrelationIdBuilder : ICorrelationBuilder
 {

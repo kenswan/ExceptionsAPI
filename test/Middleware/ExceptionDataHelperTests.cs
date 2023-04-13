@@ -8,7 +8,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace ExceptionsAPI.Test;
+namespace ExceptionsAPI.Middleware;
 
 public class ExceptionDataHelperTests
 {
