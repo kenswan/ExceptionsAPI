@@ -1,3 +1,7 @@
+[![Nuget Version](https://img.shields.io/nuget/v/ExceptionsAPI?logo=nuget)](https://www.nuget.org/packages/ExceptionsAPI)
+[![Nuget Downloads](https://img.shields.io/nuget/dt/ExceptionsAPI?logo=nuget)](https://www.nuget.org/packages/ExceptionsAPI)
+[![Continuous Integration](https://github.com/kenswan/ExceptionsAPI/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/kenswan/ExceptionsAPI/actions/workflows/continuous-integration.yml)
+
 # ExceptionsAPI
 
 **Standardizing Exception Handling Middleware to enhance API Developer experience.**
