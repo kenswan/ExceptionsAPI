@@ -4,6 +4,29 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup Label="NuGet Metadata">
+    <Title>ExceptionsAPI</Title>
+    <PackageId>ExceptionsAPI</PackageId>
+    <PackageTags>dotnet;c-sharp;aspnetcore;</PackageTags>
+    <Description>Standardizing Exception Handling Middleware to enhance API Developer experience.</Description>
+    <Authors>Kenneth Swan</Authors>
+    <Copyright>Copyright (c) 2022 Ken Swan</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kenswan/ExceptionsAPI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kenswan/ExceptionsAPI.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>See https://github.com/kenswan/ExceptionsAPI/releases</PackageReleaseNotes>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <!-- <PackageIcon>ExceptionsAPI.png</PackageIcon> -->
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Label="NuGet Artifacts">
+    <!-- <None Include="..\ExceptionsAPI.png" Pack="true" PackagePath="\" Visible="false"  /> -->
+    <None Include="..\README.md" Pack="true" PackagePath="\" Visible="false"/>
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
