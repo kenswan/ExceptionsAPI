@@ -4,7 +4,7 @@
 // -------------------------------------------------------
 
 using ExceptionsAPI;
-using Samples.ExceptionAPI.Exceptions;
+using Samples.ExceptionsAPI.Exceptions;
 using System.Net;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

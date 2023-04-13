@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 // -------------------------------------------------------
 
-namespace Samples.ExceptionAPI.Exceptions;
+namespace Samples.ExceptionsAPI.Exceptions;
 
 public class RandomException : Exception
 {

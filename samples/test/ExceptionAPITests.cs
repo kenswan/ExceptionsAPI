@@ -6,7 +6,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 
-namespace Samples.ExceptionAPI.Test;
+namespace Samples.ExceptionsAPI.Test;
 
 [Collection(nameof(SampleExceptionAPITestCollection))]
 public class ExceptionAPITests
