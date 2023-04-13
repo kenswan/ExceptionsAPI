@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Samples.ExceptionAPI.csproj" />
+    <ProjectReference Include="..\src\Samples.ExceptionsAPI.csproj" />
   </ItemGroup>
 
 </Project>

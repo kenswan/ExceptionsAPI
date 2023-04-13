@@ -14,9 +14,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionsAPI", "src\Except
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionsAPI.Test", "test\ExceptionsAPI.Test.csproj", "{4D7548C1-F397-48F9-A79F-E6257EE59DA2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.ExceptionAPI", "samples\src\Samples.ExceptionAPI.csproj", "{22D0A007-C4D5-4215-8246-97EE0A746B33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.ExceptionsAPI", "samples\src\Samples.ExceptionsAPI.csproj", "{22D0A007-C4D5-4215-8246-97EE0A746B33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.ExceptionAPI.Test", "samples\test\Samples.ExceptionAPI.Test.csproj", "{71F1A4AE-DE9E-40A8-AA59-2AA32CE3A529}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.ExceptionsAPI.Test", "samples\test\Samples.ExceptionsAPI.Test.csproj", "{71F1A4AE-DE9E-40A8-AA59-2AA32CE3A529}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
