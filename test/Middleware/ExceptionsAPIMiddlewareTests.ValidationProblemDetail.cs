@@ -18,7 +18,7 @@ public partial class ExceptionsAPIMiddlewareTests
 {
     [Theory]
     [MemberData(nameof(ExceptionsWithStatusCode))]
-    public async Task ShouldReturnValidationProblemDetails(Exception thrownException, HttpStatusCode expectedStatusCode)
+    public async Task Invoke_ShouldReturnValidationProblemDetails(Exception thrownException, HttpStatusCode expectedStatusCode)
     {
         // Adding data to exception should signal use of Problem Details
         thrownException.Data.Add("TestField1", "TestValue1");

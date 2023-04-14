@@ -69,4 +69,23 @@ public partial class ExceptionsAPIMiddlewareTests
             HttpStatusCode.Locked
         }
     };
+
+    private class TestException : ExceptionsAPIException
+    {
+        public TestException(string message) :
+            base(HttpStatusCode.Unused, message)
+        { }
+
+        public TestException(HttpStatusCode httpStatusCode, string message) :
+            base(httpStatusCode, message)
+        { }
+
+        public TestException(string message, Exception innerException) :
+            base(HttpStatusCode.Unused, message, innerException)
+        { }
+
+        public TestException(HttpStatusCode httpStatusCode, string message, Exception innerException) :
+            base(httpStatusCode, message, innerException)
+        { }
+    }
 }

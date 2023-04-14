@@ -16,30 +16,25 @@ namespace ExceptionsAPI.Middleware;
 
 public partial class ExceptionsAPIMiddlewareTests
 {
-    [Theory]
-    [MemberData(nameof(ExceptionsWithStatusCode))]
-    public async Task Invoke_ShouldReturnProblemDetails(Exception thrownException, HttpStatusCode expectedStatusCode)
+    [Fact]
+    public async Task Invoke_ShouldReturnAbstractExceptionDetails()
     {
+        HttpStatusCode expectedStatusCode = new Faker().PickRandom<HttpStatusCode>();
         var url = new Faker().Internet.UrlRootedPath();
         var queryString = "?testParam=testValue&testParam2=testValue2";
         var expectedInstance = string.Concat(url, queryString);
         var expectedMessage = new Faker().Lorem.Sentence();
+        var thrownException = new TestException(expectedStatusCode, expectedMessage);
+
+        // IOptionsMonitor should not be called
+        // This will cause a null reference exception and fail test if called
+        IOptionsMonitor<ExceptionOptions> emptyOptionsMonitor = default;
 
         using var memoryStream = new MemoryStream();
         DefaultHttpContext httpContext = new();
         httpContext.Response.Body = memoryStream;
         httpContext.Request.Path = url;
         httpContext.Request.QueryString = new QueryString(queryString);
-
-        var configuredExceptionOptions = new ExceptionOptions
-        {
-            ExceptionType = thrownException.GetType(),
-            HttpStatusCode = expectedStatusCode,
-            Message = expectedMessage
-        };
-
-        IOptionsMonitor<ExceptionOptions> optionsMonitor =
-            GenerateOptionsMonitor(thrownException.GetType().AssemblyQualifiedName, configuredExceptionOptions);
 
         requestDelegateMock.Setup(request =>
                 request.Invoke(httpContext))
@@ -50,7 +45,7 @@ public partial class ExceptionsAPIMiddlewareTests
                 exceptionsAPIMiddleware.Invoke(
                     httpContext,
                     Options.Create(new ExceptionAPIOptions()),
-                    optionsMonitor,
+                    emptyOptionsMonitor,
                     NullLogger<ExceptionsAPIMiddleware>.Instance));
 
         ProblemDetails actualErrorResponse = await GetErrorResponseFromBody<ProblemDetails>(memoryStream);

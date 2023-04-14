@@ -54,6 +54,10 @@ internal class ExceptionsAPIMiddleware
 
                 await next(httpContext);
             }
+            catch (ExceptionsAPIException exception)
+            {
+                await LogAndWriteExceptionAsync(exception.StatusCode, exception, exception.Message);
+            }
             catch (Exception exception)
             {
                 ExceptionOptions exceptionOptions =
