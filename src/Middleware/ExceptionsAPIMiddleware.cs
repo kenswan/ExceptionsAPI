@@ -41,34 +41,35 @@ internal class ExceptionsAPIMiddleware
         // TODO: Place default correlation ID composition in ICorrelationBuilder
         var correlationId = correlationIdExists ? correlationIds.First() : Guid.NewGuid().ToString();
 
-        try
+        var scope = new Dictionary<string, object>
         {
-            httpContext.Response.Headers[CORRELATION_ID_HEADER] = correlationId;
+            ["CorrelationId"] = correlationId
+        };
 
-            var scope = new Dictionary<string, object>
-            {
-                ["CorrelationId"] = correlationId
-            };
-
-            using IDisposable _ = logger.BeginScope(scope);
-
-            await next(httpContext);
-        }
-        catch (Exception exception)
+        using (logger.BeginScope(scope))
         {
-            ExceptionOptions exceptionOptions =
-                exceptionOptionsMonitor.Get(exception.GetType().AssemblyQualifiedName);
-
-            if (exceptionOptions is not null)
+            try
             {
-                await LogAndWriteExceptionAsync(
-                    exceptionOptions.HttpStatusCode,
-                    exception,
-                    exceptionOptions.Message);
+                httpContext.Response.Headers[CORRELATION_ID_HEADER] = correlationId;
+
+                await next(httpContext);
             }
-            else
+            catch (Exception exception)
             {
-                await LogAndWriteExceptionAsync(HttpStatusCode.InternalServerError, exception, "An internal error has occurred");
+                ExceptionOptions exceptionOptions =
+                    exceptionOptionsMonitor.Get(exception.GetType().AssemblyQualifiedName);
+
+                if (exceptionOptions is not null)
+                {
+                    await LogAndWriteExceptionAsync(
+                        exceptionOptions.HttpStatusCode,
+                        exception,
+                        exceptionOptions.Message);
+                }
+                else
+                {
+                    await LogAndWriteExceptionAsync(HttpStatusCode.InternalServerError, exception, "An internal error has occurred");
+                }
             }
         }
 
