@@ -56,7 +56,14 @@ internal class ExceptionsAPIMiddleware
             }
             catch (ExceptionsAPIException exception)
             {
-                await LogAndWriteExceptionAsync(exception.StatusCode, exception, exception.Message);
+                if (string.IsNullOrEmpty(exception.ClientErrorMessage))
+                {
+                    await LogAndWriteExceptionAsync(exception.StatusCode, exception);
+                }
+                else
+                {
+                    await LogAndWriteExceptionAsync(exception.StatusCode, exception, exception.ClientErrorMessage);
+                }
             }
             catch (Exception exception)
             {

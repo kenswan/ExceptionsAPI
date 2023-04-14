@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup Label="External Testing Packages">
+    <PackageVersion Include="BlazorFocused.Tools" Version="2.3.0" />
     <PackageVersion Include="Bogus" Version="34.0.2" />
     <PackageVersion Include="bunit" Version="1.4.15" />
     <PackageVersion Include="FluentAssertions" Version="6.7.0" />
