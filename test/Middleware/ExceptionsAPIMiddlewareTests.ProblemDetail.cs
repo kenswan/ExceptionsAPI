@@ -18,7 +18,7 @@ public partial class ExceptionsAPIMiddlewareTests
 {
     [Theory]
     [MemberData(nameof(ExceptionsWithStatusCode))]
-    public async Task ShouldReturnProblemDetails(Exception thrownException, HttpStatusCode expectedStatusCode)
+    public async Task Invoke_ShouldReturnProblemDetails(Exception thrownException, HttpStatusCode expectedStatusCode)
     {
         var url = new Faker().Internet.UrlRootedPath();
         var queryString = "?testParam=testValue&testParam2=testValue2";
@@ -35,7 +35,7 @@ public partial class ExceptionsAPIMiddlewareTests
         {
             ExceptionType = thrownException.GetType(),
             HttpStatusCode = expectedStatusCode,
-            Message = expectedMessage
+            DefaultMessage = expectedMessage
         };
 
         IOptionsMonitor<ExceptionOptions> optionsMonitor =

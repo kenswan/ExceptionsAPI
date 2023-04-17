@@ -54,6 +54,17 @@ internal class ExceptionsAPIMiddleware
 
                 await next(httpContext);
             }
+            catch (ExceptionsAPIException exception)
+            {
+                if (string.IsNullOrEmpty(exception.ClientErrorMessage))
+                {
+                    await LogAndWriteExceptionAsync(exception.StatusCode, exception);
+                }
+                else
+                {
+                    await LogAndWriteExceptionAsync(exception.StatusCode, exception, exception.ClientErrorMessage);
+                }
+            }
             catch (Exception exception)
             {
                 ExceptionOptions exceptionOptions =
@@ -64,7 +75,7 @@ internal class ExceptionsAPIMiddleware
                     await LogAndWriteExceptionAsync(
                         exceptionOptions.HttpStatusCode,
                         exception,
-                        exceptionOptions.Message);
+                        exceptionOptions.DefaultMessage);
                 }
                 else
                 {

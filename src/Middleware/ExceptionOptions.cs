@@ -14,7 +14,7 @@ internal class ExceptionOptions
 
     public HttpStatusCode HttpStatusCode { get; set; }
 
-    public string Message { get; set; } = "An Error Has Occurred";
+    public string DefaultMessage { get; set; }
 
     public Func<Exception, ProblemDetails> ExceptionMapping { get; set; }
 }
