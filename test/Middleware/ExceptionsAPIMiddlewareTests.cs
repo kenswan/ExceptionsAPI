@@ -45,7 +45,7 @@ public partial class ExceptionsAPIMiddlewareTests
         {
             internalOptions.ExceptionType = options.ExceptionType;
             internalOptions.HttpStatusCode = options.HttpStatusCode;
-            internalOptions.Message = options.Message;
+            internalOptions.DefaultMessage = options.DefaultMessage;
             internalOptions.ExceptionMapping = options.ExceptionMapping;
         });
 
@@ -72,8 +72,10 @@ public partial class ExceptionsAPIMiddlewareTests
 
     private class TestException : ExceptionsAPIException
     {
+        private const HttpStatusCode defaultStatusCode = HttpStatusCode.Unused;
+
         public TestException(string message) :
-            base(HttpStatusCode.Unused, message)
+            base(defaultStatusCode, message)
         { }
 
         public TestException(HttpStatusCode httpStatusCode, string message) :
@@ -81,7 +83,7 @@ public partial class ExceptionsAPIMiddlewareTests
         { }
 
         public TestException(string message, Exception innerException) :
-            base(HttpStatusCode.Unused, message, innerException)
+            base(defaultStatusCode, message, innerException)
         { }
 
         public TestException(HttpStatusCode httpStatusCode, string message, Exception innerException) :

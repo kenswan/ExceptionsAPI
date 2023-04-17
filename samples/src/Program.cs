@@ -4,6 +4,7 @@
 // -------------------------------------------------------
 
 using ExceptionsAPI;
+using Microsoft.AspNetCore.Mvc;
 using Samples.ExceptionsAPI.Exceptions;
 using System.Net;
 
@@ -29,7 +30,29 @@ app.UseExceptionsAPI();
 // Endpoints
 app.MapGet("/ThrowRandomException", () =>
 {
-    throw new RandomException("This is a test exception");
+    throw new RandomException();
+})
+.WithOpenApi();
+
+app.MapGet("/ThrowCustomClientException", (
+    [FromQuery] HttpStatusCode? statusCode,
+    [FromQuery] string? message,
+    [FromQuery] string? clientMessage) =>
+{
+    var emptyMessage = "No Message Sent";
+
+    CustomClientException exception = (statusCode, message) switch
+    {
+        { statusCode: null, message: null } => new CustomClientException(emptyMessage) { ClientErrorMessage = clientMessage },
+
+        { statusCode: null } => new CustomClientException(message) { ClientErrorMessage = clientMessage },
+
+        { message: null } => new CustomClientException(statusCode.Value, emptyMessage) { ClientErrorMessage = clientMessage },
+
+        _ => new CustomClientException(statusCode.Value, message) { ClientErrorMessage = clientMessage }
+    };
+
+    throw exception;
 })
 .WithOpenApi();
 

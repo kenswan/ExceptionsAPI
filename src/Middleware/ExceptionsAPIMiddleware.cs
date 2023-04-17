@@ -75,7 +75,7 @@ internal class ExceptionsAPIMiddleware
                     await LogAndWriteExceptionAsync(
                         exceptionOptions.HttpStatusCode,
                         exception,
-                        exceptionOptions.Message);
+                        exceptionOptions.DefaultMessage);
                 }
                 else
                 {

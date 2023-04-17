@@ -41,7 +41,7 @@ public partial class ExceptionsAPIMiddlewareTests
         {
             ExceptionType = thrownException.GetType(),
             HttpStatusCode = expectedStatusCode,
-            Message = expectedMessage
+            DefaultMessage = expectedMessage
         };
 
         IOptionsMonitor<ExceptionOptions> optionsMonitor =
