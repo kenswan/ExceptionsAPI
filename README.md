@@ -107,3 +107,58 @@ app.UseHttpsRedirection();
 // Register Exceptions API Middleware
 app.UseExceptionsAPI();
 ```
+
+## Status Code & Error Message Runtime Determination
+
+You can establish specific status codes and error messages for specific exceptions at runtime. This allows you to have a single exception type that can be thrown in multiple places and have different status codes and error messages depending on the context.
+
+1. Create a class that inherits from the abstract class `ExceptionsAPIException`. This class will allow an input of a status code as well as an optional client error message (initialized during exception creation).
+
+   ```csharp
+   public class CustomClientException : ExceptionsAPIException
+   {
+       private const HttpStatusCode defaultStatusCode = HttpStatusCode.Conflict;
+
+       // You can set a constructor to pass a default status code
+       public CustomClientException(string message) :
+           base(defaultStatusCode, message)
+       { }
+
+       // You can create a constructor to receive a status code dynamically
+       public CustomClientException(HttpStatusCode httpStatusCode, string message) :
+           base(httpStatusCode, message)
+       { }
+
+       public CustomClientException(string message, Exception innerException) :
+           base(defaultStatusCode, message, innerException)
+       { }
+
+       public CustomClientException(HttpStatusCode httpStatusCode, string message, Exception innerException) :
+           base(httpStatusCode, message, innerException)
+       { }
+   }
+   ```
+
+1. Throwing the below exception will result in the following response body:
+
+   ```csharp
+   throw new CustomClientException(HttpStatusCode.BadRequest, "Internal Message")
+   {
+       // "Internal Message" will be logged
+       // "External Message" will be returned
+       // "Internal Message" will be returned if ClientErrorMessage is not set
+       ClientErrorMessage = "External Message"
+   }
+   ```
+
+   Output:
+
+   ```json
+   {
+     "type": "CustomClientException",
+     "title": "BadRequest",
+     "status": 400,
+     "detail": "External Message",
+     "instance": "/api/YourEndpoint/PathAndQueryRequest?IncludingParams=true"
+   }
+   ```
