@@ -4,18 +4,20 @@
 // -------------------------------------------------------
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace ExceptionsAPI;
 
 public interface IExceptionsAPIBuilder
 {
-    public IExceptionsAPIBuilder AddCorrelation(Func<HttpContext, IServiceProvider, string> correlationBuilder);
+    IExceptionsAPIBuilder AddCorrelation(Func<HttpContext, IServiceProvider, string> correlationBuilder);
 
-    public IExceptionsAPIBuilder AddException<TException>(HttpStatusCode httpStatusCode)
+    IExceptionsAPIBuilder AddException<TException>(HttpStatusCode httpStatusCode)
         where TException : Exception;
 
-    public IExceptionsAPIBuilder AddException<TException>(Func<TException, ProblemDetails> action)
+    IExceptionsAPIBuilder AddException<TException>(HttpStatusCode httpStatusCode, string clientErrorMessage)
+        where TException : Exception;
+
+    IExceptionsAPIBuilder AddException<TException>(Func<HttpContext, TException, ExceptionsAPIResponse> buildExceptionResponse)
         where TException : Exception;
 }

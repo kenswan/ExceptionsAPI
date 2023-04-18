@@ -46,7 +46,7 @@ public partial class ExceptionsAPIMiddlewareTests
             internalOptions.ExceptionType = options.ExceptionType;
             internalOptions.HttpStatusCode = options.HttpStatusCode;
             internalOptions.DefaultMessage = options.DefaultMessage;
-            internalOptions.ExceptionMapping = options.ExceptionMapping;
+            internalOptions.ExceptionResponseResolver = options.ExceptionResponseResolver;
         });
 
         return serviceCollection
