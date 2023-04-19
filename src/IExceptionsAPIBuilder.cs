@@ -10,8 +10,6 @@ namespace ExceptionsAPI;
 
 public interface IExceptionsAPIBuilder
 {
-    IExceptionsAPIBuilder AddCorrelation(Func<HttpContext, IServiceProvider, string> correlationBuilder);
-
     IExceptionsAPIBuilder AddException<TException>(HttpStatusCode httpStatusCode)
         where TException : Exception;
 

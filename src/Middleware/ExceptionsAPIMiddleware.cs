@@ -32,7 +32,7 @@ internal class ExceptionsAPIMiddleware
         ILogger<ExceptionsAPIMiddleware> logger)
     {
         var correlationIdExists =
-            httpContext.Request.Headers.TryGetValue(exceptionAPIOptions.Value.CorrelationIdHeader, out StringValues correlationIds);
+            httpContext.Request.Headers.TryGetValue(exceptionAPIOptions.Value.CorrelationId, out StringValues correlationIds);
 
         // TODO: Check for correlation ID builder if correlation ID does not exist
         // If correlation ID builder has registered action, use that action

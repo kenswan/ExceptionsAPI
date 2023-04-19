@@ -19,9 +19,6 @@ internal class ExceptionsAPIBuilder : IExceptionsAPIBuilder
         this.serviceCollection = serviceCollection;
     }
 
-    public IExceptionsAPIBuilder AddCorrelation(Func<HttpContext, IServiceProvider, string> correlationBuilder) =>
-        throw new NotImplementedException();
-
     public IExceptionsAPIBuilder AddException<TException>(HttpStatusCode httpStatusCode)
         where TException : Exception
     {
