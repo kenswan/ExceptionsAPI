@@ -31,8 +31,11 @@ internal class ExceptionsAPIMiddleware
         IOptionsMonitor<ExceptionOptions> exceptionOptionsMonitor,
         ILogger<ExceptionsAPIMiddleware> logger)
     {
+        ExceptionAPIOptions exceptionAPIOptionsValue = exceptionAPIOptions.Value ??
+            throw new ArgumentNullException(nameof(exceptionAPIOptions));
+
         var correlationIdExists =
-            httpContext.Request.Headers.TryGetValue(exceptionAPIOptions.Value.CorrelationId, out StringValues correlationIds);
+            httpContext.Request.Headers.TryGetValue(exceptionAPIOptionsValue.CorrelationId, out StringValues correlationIds);
 
         // TODO: Check for correlation ID builder if correlation ID does not exist
         // If correlation ID builder has registered action, use that action
@@ -68,18 +71,28 @@ internal class ExceptionsAPIMiddleware
             catch (Exception exception)
             {
                 ExceptionOptions exceptionOptions =
-                    exceptionOptionsMonitor.Get(exception.GetType().AssemblyQualifiedName);
+                    exceptionOptionsMonitor?.Get(exception.GetType().AssemblyQualifiedName);
 
                 if (exceptionOptions is not null)
                 {
-                    await LogAndWriteExceptionAsync(
-                        exceptionOptions.HttpStatusCode,
-                        exception,
-                        exceptionOptions.DefaultMessage);
+                    if (exceptionOptions.ExceptionResponseResolver is null)
+                    {
+                        await LogAndWriteExceptionAsync(
+                            exceptionOptions.HttpStatusCode,
+                            exception,
+                            exceptionOptions.DefaultMessage);
+                    }
+                    else
+                    {
+                        // TODO: Add Configured Message Resolution
+                    }
                 }
                 else
                 {
-                    await LogAndWriteExceptionAsync(HttpStatusCode.InternalServerError, exception, "An internal error has occurred");
+                    await LogAndWriteExceptionAsync(
+                        exceptionAPIOptionsValue.DefaultErrorStatusCode,
+                        exception,
+                        exceptionAPIOptionsValue.DefaultErrorMessage);
                 }
             }
         }

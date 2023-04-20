@@ -25,17 +25,11 @@ public partial class ExceptionsAPIMiddlewareTests
         thrownException.Data.Add("TestField2", "TestValue2");
         thrownException.Data.Add("TestField3", "TestValue3");
 
-        var correlationIdKey = new Faker().Internet.UserAgent();
-        var url = new Faker().Internet.UrlRootedPath();
-        var queryString = "?testParam=testValue&testParam2=testValue2";
-        var expectedInstance = string.Concat(url, queryString);
-        var expectedMessage = new Faker().Lorem.Sentence();
+        using MemoryStream memoryStream =
+            GenerateHttpContext(out var expectedInstance, out HttpContext httpContext);
 
-        using var memoryStream = new MemoryStream();
-        DefaultHttpContext httpContext = new();
-        httpContext.Response.Body = memoryStream;
-        httpContext.Request.Path = url;
-        httpContext.Request.QueryString = new QueryString(queryString);
+        var correlationIdKey = new Faker().Internet.UserAgent();
+        var expectedMessage = new Faker().Lorem.Sentence();
 
         var configuredExceptionOptions = new ExceptionOptions
         {

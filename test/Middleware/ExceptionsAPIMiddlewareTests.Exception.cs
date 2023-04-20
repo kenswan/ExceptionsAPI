@@ -21,22 +21,16 @@ public partial class ExceptionsAPIMiddlewareTests
     [Fact]
     public async Task Invoke_ShouldReturnAbstractExceptionDetails()
     {
+        using MemoryStream memoryStream =
+            GenerateHttpContext(out var expectedInstance, out HttpContext httpContext);
+
         HttpStatusCode expectedStatusCode = new Faker().PickRandom<HttpStatusCode>();
-        var url = new Faker().Internet.UrlRootedPath();
-        var queryString = "?testParam=testValue&testParam2=testValue2";
-        var expectedInstance = string.Concat(url, queryString);
         var expectedMessage = new Faker().Lorem.Sentence();
         var thrownException = new TestException(expectedStatusCode, expectedMessage);
 
         // IOptionsMonitor should not be called
         // This will cause a null reference exception and fail test if called
         IOptionsMonitor<ExceptionOptions> emptyOptionsMonitor = default;
-
-        using var memoryStream = new MemoryStream();
-        DefaultHttpContext httpContext = new();
-        httpContext.Response.Body = memoryStream;
-        httpContext.Request.Path = url;
-        httpContext.Request.QueryString = new QueryString(queryString);
 
         requestDelegateMock.Setup(request =>
                 request.Invoke(httpContext))
@@ -68,10 +62,11 @@ public partial class ExceptionsAPIMiddlewareTests
         // Add Test Logger to ensure internal message is being logged
         ITestLogger<ExceptionsAPIMiddleware> loggerMock = ToolsBuilder.CreateTestLogger<ExceptionsAPIMiddleware>();
 
+        using MemoryStream memoryStream =
+            GenerateHttpContext(out var expectedInstance, out HttpContext httpContext);
+
         HttpStatusCode expectedStatusCode = new Faker().PickRandom<HttpStatusCode>();
-        var url = new Faker().Internet.UrlRootedPath();
-        var queryString = "?testParam=testValue&testParam2=testValue2";
-        var expectedInstance = string.Concat(url, queryString);
+        var expectedMessage = new Faker().Lorem.Sentence();
         var internalLogMessage = new Faker().Lorem.Sentence();
         var externalClientMessage = new Faker().Lorem.Sentence();
 
@@ -83,12 +78,6 @@ public partial class ExceptionsAPIMiddlewareTests
         // IOptionsMonitor should not be called
         // This will cause a null reference exception and fail test if called
         IOptionsMonitor<ExceptionOptions> emptyOptionsMonitor = default;
-
-        using var memoryStream = new MemoryStream();
-        DefaultHttpContext httpContext = new();
-        httpContext.Response.Body = memoryStream;
-        httpContext.Request.Path = url;
-        httpContext.Request.QueryString = new QueryString(queryString);
 
         requestDelegateMock.Setup(request =>
                 request.Invoke(httpContext))
