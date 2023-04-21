@@ -31,8 +31,11 @@ internal class ExceptionsAPIMiddleware
         IOptionsMonitor<ExceptionOptions> exceptionOptionsMonitor,
         ILogger<ExceptionsAPIMiddleware> logger)
     {
+        ExceptionAPIOptions exceptionAPIOptionsValue = exceptionAPIOptions.Value ??
+            throw new ArgumentNullException(nameof(exceptionAPIOptions));
+
         var correlationIdExists =
-            httpContext.Request.Headers.TryGetValue(exceptionAPIOptions.Value.CorrelationId, out StringValues correlationIds);
+            httpContext.Request.Headers.TryGetValue(exceptionAPIOptionsValue.CorrelationId, out StringValues correlationIds);
 
         // TODO: Check for correlation ID builder if correlation ID does not exist
         // If correlation ID builder has registered action, use that action
@@ -68,20 +71,51 @@ internal class ExceptionsAPIMiddleware
             catch (Exception exception)
             {
                 ExceptionOptions exceptionOptions =
-                    exceptionOptionsMonitor.Get(exception.GetType().AssemblyQualifiedName);
+                    exceptionOptionsMonitor?.Get(exception.GetType().AssemblyQualifiedName);
 
-                if (exceptionOptions is not null)
+                Task logAndWriteResponseTask = exceptionOptions switch
                 {
-                    await LogAndWriteExceptionAsync(
-                        exceptionOptions.HttpStatusCode,
-                        exception,
-                        exceptionOptions.DefaultMessage);
-                }
-                else
-                {
-                    await LogAndWriteExceptionAsync(HttpStatusCode.InternalServerError, exception, "An internal error has occurred");
-                }
+                    // Leverage Message composition
+                    // If both default message and message composition exists,
+                    // message composition will take precedence
+                    { } when exceptionOptions is not null && exceptionOptions.ExceptionResponseResolver is not null =>
+                        LogAndWriteExceptionsResponseResolverAsync(exceptionOptions.ExceptionResponseResolver, exception),
+
+                    // Leverage Default Message configured (and status code)
+                    { } when exceptionOptions is not null &&
+                            exceptionOptions.DefaultMessage is not null &&
+                            exceptionOptions.HttpStatusCode.HasValue =>
+                        LogAndWriteExceptionAsync(
+                            exceptionOptions.HttpStatusCode.Value,
+                            exception,
+                            exceptionOptions.DefaultMessage),
+
+                    // Leverage Status Code configured
+                    { } when exceptionOptions is not null && exceptionOptions.HttpStatusCode.HasValue =>
+                        LogAndWriteExceptionAsync(
+                            exceptionOptions.HttpStatusCode.Value,
+                            exception,
+                            exceptionAPIOptionsValue.DefaultErrorMessage),
+
+                    _ => LogAndWriteExceptionAsync(
+                            exceptionAPIOptionsValue.DefaultErrorStatusCode,
+                            exception,
+                            exceptionAPIOptionsValue.DefaultErrorMessage)
+                }; ;
+
+                await logAndWriteResponseTask;
             }
+        }
+
+        async Task LogAndWriteExceptionsResponseResolverAsync(ExceptionResponseResolver exceptionResponseResolver, Exception exception)
+        {
+            ExceptionsAPIResponse exceptionsAPIResponse =
+                            exceptionResponseResolver.Resolve(httpContext, exception);
+
+            await LogAndWriteExceptionAsync(
+                exceptionsAPIResponse.HttpStatusCode,
+                exception,
+                exceptionsAPIResponse.ErrorMessage);
         }
 
         async Task LogAndWriteExceptionAsync(HttpStatusCode httpStatusCode, Exception exception, string messageOverride = default)

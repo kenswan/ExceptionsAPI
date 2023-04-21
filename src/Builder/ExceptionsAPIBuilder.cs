@@ -58,6 +58,7 @@ internal class ExceptionsAPIBuilder : IExceptionsAPIBuilder
                 options.ExceptionType = typeof(TException);
                 options.ExceptionResponseResolver = resolver;
                 options.DefaultMessage = null;
+                options.HttpStatusCode = null;
             });
 
         return this;
