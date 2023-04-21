@@ -35,20 +35,14 @@ public class ExceptionsAPITests
     {
         HttpStatusCode expectedStatusCode = GenerateNon300LevelStatusCode();
 
-        // HttpStatusCode expectedStatusCode = HttpStatusCode.Re;
-
         testOutputHelper.WriteLine("Expected Status Code: {0}", expectedStatusCode);
 
         var url = $"/ThrowCustomClientException?statusCode={(int)expectedStatusCode}";
 
-        // HttpResponseMessage httpResponseMessage = await webApplicationFactoryClient.GetAsync(url);
-
         RestClientTask response = await restClient.SendAsync(HttpMethod.Get, url);
 
-        //testOutputHelper.WriteLine("Expected Status Code: {0}", httpResponseMessage.StatusCode);
         testOutputHelper.WriteLine("Expected Status Code: {0}", response.StatusCode.Value);
 
-        //Assert.Equal(expectedStatusCode, httpResponseMessage.StatusCode);
         Assert.Equal(expectedStatusCode, response.StatusCode.Value);
     }
 
