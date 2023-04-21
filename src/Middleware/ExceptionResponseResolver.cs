@@ -16,10 +16,13 @@ public class ExceptionResponseResolver<T> : ExceptionResponseResolver where T : 
         this.exceptionMapping = exceptionMapping;
     }
 
-    public ExceptionsAPIResponse Resolve(HttpContext httpContext, T exception) =>
-        exceptionMapping(httpContext, exception);
+    public override ExceptionsAPIResponse Resolve(HttpContext httpContext, Exception exception) =>
+        exception is not T castedException
+            ? throw new ArgumentException($"Exception of type {exception.GetType().FullName} does not have configured response")
+            : exceptionMapping(httpContext, castedException);
 }
 
-public class ExceptionResponseResolver
+public abstract class ExceptionResponseResolver
 {
+    public abstract ExceptionsAPIResponse Resolve(HttpContext httpContext, Exception exception);
 }

@@ -107,7 +107,7 @@ public class ExceptionsAPIBuilderTests
         ExceptionsAPIResponse actualExceptionsResponse =
             resolver.Resolve(httpContextMock.Object, expectedException);
 
-        Assert.Equal(expectedExceptionsResponse.StatusCode, actualExceptionsResponse.StatusCode);
+        Assert.Equal(expectedExceptionsResponse.HttpStatusCode, actualExceptionsResponse.HttpStatusCode);
         Assert.Equal(expectedExceptionsResponse.ErrorMessage, actualExceptionsResponse.ErrorMessage);
     }
 
@@ -118,7 +118,7 @@ public class ExceptionsAPIBuilderTests
         where T : Exception =>
             new()
             {
-                StatusCode = (HttpStatusCode)httpContext.Response.StatusCode,
+                HttpStatusCode = (HttpStatusCode)httpContext.Response.StatusCode,
                 ErrorMessage = exception.Message
             };
 }

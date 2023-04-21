@@ -11,6 +11,7 @@ using Moq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using Xunit.Sdk;
 
 namespace ExceptionsAPI.Middleware;
 
@@ -33,8 +34,15 @@ public partial class ExceptionsAPIMiddlewareTests
         using var streamReader = new StreamReader(stream);
         var errorResponseString = await streamReader.ReadToEndAsync();
 
-        return JsonSerializer.Deserialize<T>(errorResponseString,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        try
+        {
+            return JsonSerializer.Deserialize<T>(errorResponseString,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (JsonException)
+        {
+            throw new XunitException($"Response was not in json -> Response: '{errorResponseString}'");
+        }
     }
 
     // Adding real options monitor due to inability to Moq

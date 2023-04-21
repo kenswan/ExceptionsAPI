@@ -113,7 +113,7 @@ public partial class ExceptionsAPIMiddlewareTests
                     return new ExceptionsAPIResponse
                     {
                         ErrorMessage = expectedMessage,
-                        StatusCode = expectedStatusCode
+                        HttpStatusCode = expectedStatusCode
                     };
                 })
         };

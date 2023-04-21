@@ -11,7 +11,7 @@ internal class ExceptionOptions
 {
     public Type ExceptionType { get; set; }
 
-    public HttpStatusCode HttpStatusCode { get; set; }
+    public HttpStatusCode? HttpStatusCode { get; set; }
 
     public string DefaultMessage { get; set; }
 

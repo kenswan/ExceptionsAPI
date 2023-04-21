@@ -73,28 +73,49 @@ internal class ExceptionsAPIMiddleware
                 ExceptionOptions exceptionOptions =
                     exceptionOptionsMonitor?.Get(exception.GetType().AssemblyQualifiedName);
 
-                if (exceptionOptions is not null)
+                Task logAndWriteResponseTask = exceptionOptions switch
                 {
-                    if (exceptionOptions.ExceptionResponseResolver is null)
-                    {
-                        await LogAndWriteExceptionAsync(
-                            exceptionOptions.HttpStatusCode,
+                    // Leverage Message composition
+                    // If both default message and message composition exists,
+                    // message composition will take precedence
+                    { } when exceptionOptions is not null && exceptionOptions.ExceptionResponseResolver is not null =>
+                        LogAndWriteExceptionsResponseResolverAsync(exceptionOptions.ExceptionResponseResolver, exception),
+
+                    // Leverage Default Message configured (and status code)
+                    { } when exceptionOptions is not null &&
+                            exceptionOptions.DefaultMessage is not null &&
+                            exceptionOptions.HttpStatusCode.HasValue =>
+                        LogAndWriteExceptionAsync(
+                            exceptionOptions.HttpStatusCode.Value,
                             exception,
-                            exceptionOptions.DefaultMessage);
-                    }
-                    else
-                    {
-                        // TODO: Add Configured Message Resolution
-                    }
-                }
-                else
-                {
-                    await LogAndWriteExceptionAsync(
-                        exceptionAPIOptionsValue.DefaultErrorStatusCode,
-                        exception,
-                        exceptionAPIOptionsValue.DefaultErrorMessage);
-                }
+                            exceptionOptions.DefaultMessage),
+
+                    // Leverage Status Code configured
+                    { } when exceptionOptions is not null && exceptionOptions.HttpStatusCode.HasValue =>
+                        LogAndWriteExceptionAsync(
+                            exceptionOptions.HttpStatusCode.Value,
+                            exception,
+                            exceptionAPIOptionsValue.DefaultErrorMessage),
+
+                    _ => LogAndWriteExceptionAsync(
+                            exceptionAPIOptionsValue.DefaultErrorStatusCode,
+                            exception,
+                            exceptionAPIOptionsValue.DefaultErrorMessage)
+                }; ;
+
+                await logAndWriteResponseTask;
             }
+        }
+
+        async Task LogAndWriteExceptionsResponseResolverAsync(ExceptionResponseResolver exceptionResponseResolver, Exception exception)
+        {
+            ExceptionsAPIResponse exceptionsAPIResponse =
+                            exceptionResponseResolver.Resolve(httpContext, exception);
+
+            await LogAndWriteExceptionAsync(
+                exceptionsAPIResponse.HttpStatusCode,
+                exception,
+                exceptionsAPIResponse.ErrorMessage);
         }
 
         async Task LogAndWriteExceptionAsync(HttpStatusCode httpStatusCode, Exception exception, string messageOverride = default)

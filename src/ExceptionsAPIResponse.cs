@@ -9,7 +9,7 @@ namespace ExceptionsAPI;
 
 public class ExceptionsAPIResponse
 {
-    public HttpStatusCode StatusCode { get; set; }
+    public HttpStatusCode HttpStatusCode { get; set; }
 
     public string ErrorMessage { get; set; }
 }
