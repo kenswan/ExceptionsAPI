@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Samples.ExceptionsAPI.Exceptions;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Web;
 using Xunit.Abstractions;
@@ -44,6 +45,8 @@ public class ExceptionsAPITests
         testOutputHelper.WriteLine("Expected Status Code: {0}", response.StatusCode.Value);
 
         Assert.Equal(expectedStatusCode, response.StatusCode.Value);
+
+        ValidateHeaders(response.Headers);
     }
 
     [Fact]
@@ -56,10 +59,12 @@ public class ExceptionsAPITests
         ProblemDetails problemDetails = GetProblemDetails(response);
 
         Assert.Equal(nameof(RandomException), problemDetails.Type);
-        Assert.Equal((int)HttpStatusCode.Ambiguous, problemDetails.Status);
-        Assert.Equal(HttpStatusCode.Ambiguous.ToString(), problemDetails.Title);
+        Assert.Equal((int)HttpStatusCode.FailedDependency, problemDetails.Status);
+        Assert.Equal(HttpStatusCode.FailedDependency.ToString(), problemDetails.Title);
         Assert.Equal(new ExceptionAPIOptions().DefaultErrorMessage, problemDetails.Detail);
         Assert.Equal(url, problemDetails.Instance);
+
+        ValidateHeaders(response.Headers);
     }
 
     [Fact]
@@ -79,6 +84,8 @@ public class ExceptionsAPITests
         Assert.Equal(expectedStatusCode.ToString(), problemDetails.Title);
         Assert.Equal(expectedMessage, problemDetails.Detail);
         Assert.Equal(url, HttpUtility.UrlDecode(problemDetails.Instance));
+
+        ValidateHeaders(response.Headers);
     }
 
     [Fact]
@@ -101,10 +108,19 @@ public class ExceptionsAPITests
         Assert.Equal((int)expectedStatusCode, problemDetails.Status);
         Assert.Equal(expectedStatusCode.ToString(), problemDetails.Title);
         Assert.Equal(url, HttpUtility.UrlDecode(problemDetails.Instance));
+
+        ValidateHeaders(response.Headers);
     }
 
     private static ProblemDetails GetProblemDetails(RestClientTask restClientTask) =>
         JsonSerializer.Deserialize<ProblemDetails>(restClientTask.Content);
+
+    private static void ValidateHeaders(HttpResponseHeaders httpResponseHeaders)
+    {
+        Assert.True(httpResponseHeaders.TryGetValues(Program.CORRELATION_HEADER_KEY, out IEnumerable<string> headers));
+        Assert.Single(headers);
+        Assert.False(string.IsNullOrWhiteSpace(headers.First()));
+    }
 
     // When running responses from WebApplication Factory, 300 level errors are
     // causing unpredicted behavior

@@ -17,9 +17,6 @@ internal class ExceptionsAPIMiddleware
 {
     private readonly RequestDelegate next;
 
-    // TODO: Remove this value and pull from configured options
-    private const string CORRELATION_ID_HEADER = "X-Correlation-Id";
-
     public ExceptionsAPIMiddleware(RequestDelegate next)
     {
         this.next = next;
@@ -34,26 +31,31 @@ internal class ExceptionsAPIMiddleware
         ExceptionAPIOptions exceptionAPIOptionsValue = exceptionAPIOptions.Value ??
             throw new ArgumentNullException(nameof(exceptionAPIOptions));
 
-        var correlationIdExists =
-            httpContext.Request.Headers.TryGetValue(exceptionAPIOptionsValue.CorrelationId, out StringValues correlationIds);
+        var correlationKey = exceptionAPIOptionsValue.CorrelationKey;
 
-        // TODO: Check for correlation ID builder if correlation ID does not exist
-        // If correlation ID builder has registered action, use that action
-        // Otherwise use below logic, which should be placed in ICorrelationBuilder default behavior
+        var correlationKeyExists =
+            httpContext.Request.Headers.TryGetValue(exceptionAPIOptionsValue.CorrelationKey, out StringValues correlationValues);
 
-        // TODO: Place default correlation ID composition in ICorrelationBuilder
-        var correlationId = correlationIdExists ? correlationIds.First() : Guid.NewGuid().ToString();
+        var correlationValue = correlationKeyExists switch
+        {
+            { } when correlationKeyExists => correlationValues.First(),
+
+            { } when exceptionAPIOptionsValue.ConfigureCorrelationValue is not null =>
+                    exceptionAPIOptionsValue.ConfigureCorrelationValue(httpContext),
+
+            _ => Guid.NewGuid().ToString()
+        };
 
         var scope = new Dictionary<string, object>
         {
-            ["CorrelationId"] = correlationId
+            ["CorrelationId"] = correlationValue
         };
 
         using (logger.BeginScope(scope))
         {
             try
             {
-                httpContext.Response.Headers[CORRELATION_ID_HEADER] = correlationId;
+                httpContext.Response.Headers[correlationKey] = correlationValue;
 
                 await next(httpContext);
             }
