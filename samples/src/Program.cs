@@ -15,8 +15,14 @@ builder.Services.AddSwaggerGen();
 
 // Register custom exceptions and status codes
 builder.Services
-    .AddExceptionsAPI()
-        .AddException<RandomException>(HttpStatusCode.Ambiguous);
+    // .AddExceptionsAPI() -> Use this extension for  default correlation key/value
+    .AddExceptionsAPI(options =>
+    {
+        options.CorrelationKey = "X-TestCorrelation-Id";
+        options.CorrelationKey = CORRELATION_HEADER_KEY;
+        options.ConfigureCorrelationValue = (httpContext) => { return httpContext.TraceIdentifier; };
+    }) // Use this extension for  default correlation key/value
+        .AddException<RandomException>(HttpStatusCode.FailedDependency);
 
 WebApplication app = builder.Build();
 
@@ -59,4 +65,7 @@ app.MapGet("/ThrowCustomClientException", (
 app.Run();
 
 // Used for integration test web application factory accessibility
-public partial class Program { }
+public partial class Program
+{
+    public const string CORRELATION_HEADER_KEY = "Test-Correlation-Id";
+}
