@@ -7,6 +7,9 @@ using System.Net;
 
 namespace ExceptionsAPI;
 
+/// <summary>
+/// Represents current context of an exception being handled in Exceptions API Middleware
+/// </summary>
 public class ExceptionsAPIResponse
 {
     public HttpStatusCode HttpStatusCode { get; set; }
