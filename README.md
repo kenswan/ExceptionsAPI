@@ -162,3 +162,17 @@ You can establish specific status codes and error messages for specific exceptio
      "instance": "/api/YourEndpoint/PathAndQueryRequest?IncludingParams=true"
    }
    ```
+
+## Correlation IDs
+
+By default, a correlation ID is generated for each request (random Guid in header key `X-Correlation-ID`). This correlation ID is included in the response body. This correlation ID can be used to trace the request through the logs. To change this behavior, you can set the `ExceptionsAPIOptions` in the `AddExceptionsAPI` method.
+
+```csharp
+serviceCollection.AddExceptionsAPI(options =>
+{
+    options.CorrelationKey = "Use-This-Correlation-Key";
+
+    // Option to derive from HttpContext
+    options.ConfigureCorrelationValue = (httpContext) => httpContext.TraceIdentifier;
+});
+```
